@@ -1,3 +1,23 @@
+from datetime import datetime
+import os
+
+BASE_PATH = os.getcwd()
+LOGS_DIR_NAME = 'logs'
+LOGS_FILE_NAME = 'logs.txt'
+
+def parametrized_decor(full_path):
+    def decor(foo):
+        def log_func(*args, **kwars):
+            # print('Код до вызова функции')
+            res = foo(*args, **kwars)
+            with open(full_path, 'a', encoding='utf-8') as file_obj:
+                result = f"Вызов функции {foo.__name__}, дата и время вызова функции - {datetime.now()}, аргументы - {args}, {kwars},\n результат - {res} \n"
+                # print(result)
+                file_obj.write(result)
+            # print('Код после вызова функции')
+        return log_func
+    return decor
+
 class Student:
     def __init__(self, name, surname, gender):
         self.name = name
@@ -109,7 +129,7 @@ second_student.rate_lect(first_lecturer, 'Python', 9)
 first_student.rate_lect(second_lecturer, 'Git', 4)
 second_student.rate_lect(second_lecturer, 'Python', 9)
 
-
+@parametrized_decor(full_path=os.path.join(BASE_PATH, LOGS_DIR_NAME, LOGS_FILE_NAME))
 def average_stud (stud_list, course_name):
     x = 0
     new_list = []
@@ -121,7 +141,9 @@ def average_stud (stud_list, course_name):
                     x += i
             y = x / len(gr) / len(new_list)
     print(f'Средняя оценка за домашние задания по всем студентам в рамках курса {course_name}: {y}')
+    return y
 
+@parametrized_decor(full_path=os.path.join(BASE_PATH, LOGS_DIR_NAME, LOGS_FILE_NAME))
 def average_lect (lect_list, course_name):
     n = 0
     new_l = []
@@ -133,6 +155,7 @@ def average_lect (lect_list, course_name):
                     n += i
             t = n / len(g) / len(new_l)
     print(f'Средняя оценка за лекции всех лекторов в рамках курса {course_name}: {t}')
+    return t
 
 print(first_reviewer)
 print(first_lecturer)
